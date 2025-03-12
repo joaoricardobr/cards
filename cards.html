@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Site de Cards de Código</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Cores */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #e74c3c;
+            --accent-color: #f39c12;
+            --text-color: #ecf0f1;
+            --bg-color: #2c3e50;
+            --card-bg-color: rgba(44, 62, 80, 0.7); /* Semi-transparente para melhor legibilidade */
+        }
+
+        /* Estilos gerais */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        #logout-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #logout-button:hover {
+            background-color: #c0392b;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        /* Estilos para a barra de busca */
+        #search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #search-bar input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+        }
+
+        #search-bar input[type="text"]::placeholder {
+            color: rgba(236, 240, 241, 0.7);
+        }
+
+        /* Estilos para os botões de visualização */
+        #view-options {
+            text-align: right;
+        }
+
+        #view-options button {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #view-options button:hover {
+            background-color: #d8870b;
+        }
+
+        /* Estilos para a seção de login */
+        #login-section {
+            background-color: var(--card-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        #login-section h2 {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+
+        #login-section input[type="email"],
+        #login-section input[type="password"],
+        #login-section button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+
+        #login-section button {
+            cursor: pointer;
+            background-color: var(--primary-color);
+            transition: background-color 0.3s ease;
+        }
+
+        #login-section button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Estilos para a seção de adicionar card */
+        #add-card {
+            background-color: var(--card-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        #add-card h2 {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+
+        #add-card input[type="text"],
+        #add-card textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        #add-card textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        #add-card button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #add-card button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Estilos para a lista de cards */
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .cards-container.list-view .card {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+        }
+
+        .cards-container.list-view .card h3 {
+            margin-right: 20px;
+            width: 20%;
+        }
+
+        .cards-container.list-view .card .code-container {
+            width: 60%;
+        }
+
+        .card {
+            background-color: #333;
+            border-radius: 8px;
+            padding: 15px;
+            width: calc(33.33% - 20px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+            color: var(--text-color);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(52, 152, 219, 0.5), rgba(231, 76, 60, 0.5), rgba(243, 156, 18, 0.5));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .card .code-container {
+            display: none;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .card pre {
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .card .card-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .card button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            display: inline-block;
+            margin: 0; /* Remove margem para melhor alinhamento */
+        }
+
+        .card button:hover {
+            opacity: 1;
+            background-color: #2980b9;
+        }
+
+        .card .delete-button {
+            background-color: var(--secondary-color);
+        }
+
+        .card .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        .card .edit-button {
+            background-color: var(--accent-color);
+        }
+
+        .card .edit-button:hover {
+            background-color: #d8870b;
+        }
+
+        .card .save-button {
+            background-color: #2ecc71;
+            display: none; /* Esconde o botão de salvar inicialmente */
+        }
+
+        .card .save-button:hover {
+            background-color: #27ae60;
+        }
+
+        .card .edit-mode .code-container {
+            display: block;
+        }
+
+        .card .edit-mode pre {
+            display: none; /* Esconde o texto do código no modo de edição */
+        }
+
+        .card .edit-mode textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .card .edit-mode .card-buttons .edit-button,
+        .card .edit-mode .card-buttons .copy-button,
+        .card .edit-mode .card-buttons .delete-button {
+            display: none; /* Esconde os botões originais no modo de edição */
+        }
+
+        .card .edit-mode .card-buttons .save-button {
+            display: inline-block; /* Mostra o botão de salvar no modo de edição */
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .card {
+                width: calc(50% - 20px);
+            }
+
+            #search-bar input[type="text"] {
+                width: 60%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                width: 100%;
+            }
+
+            #search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #search-bar input[type="text"] {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #view-options {
+                text-align: center;
+            }
+
+            #view-options button {
+                margin-left: 0;
+                margin-right: 10px;
+            }
+        }
+
+        /* Estilos para o rodapé */
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+    </style>
+    <!-- Import the functions you need from the SDKs you need -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Meu Site de Cards de Código</h1>
+        <button id="logout-button">Sair</button>
+    </header>
+
+    <main>
+        <section id="login-section">
+            <h2>Login</h2>
+            <input type="email" id="email-input" placeholder="Email">
+            <input type="password" id="password-input" placeholder="Senha">
+            <button id="login-button">Entrar</button>
+        </section>
+
+        <section id="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar cards...">
+            <div id="view-options">
+                <button id="grid-view-button"><i class="fas fa-th-large"></i></button>
+                <button id="list-view-button"><i class="fas fa-list"></i></button>
+            </div>
+        </section>
+
+        <section id="add-card" style="display: none;">
+            <h2>Adicionar Novo Card</h2>
+            <input type="text" id="card-title" placeholder="Título do Card">
+            <textarea id="card-code" placeholder="Código"></textarea>
+            <button id="add-button">Adicionar</button>
+        </section>
+
+        <section id="card-list">
+            <h2>Meus Cards</h2>
+            <div class="cards-container">
+                <!-- Os cards serão adicionados aqui pelo JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Meu Site de Cards</p>
+    </footer>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC0iJ0FprASJbqMaEVezRfsLF21O-zQxI4",
+            authDomain: "cloud-engenheiros.firebaseapp.com",
+            projectId: "cloud-engenheiros",
+            storageBucket: "cloud-engenheiros.firebasestorage.app",
+            messagingSenderId: "923596482018",
+            appId: "1:923596482018:web:5e388229af8a3d259b05bb",
+            measurementId: "G-D45N5WPYZ0"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginSection = document.getElementById('login-section');
+            const emailInput = document.getElementById('email-input');
+            const passwordInput = document.getElementById('password-input');
+            const loginButton = document.getElementById('login-button');
+            const addCardSection = document.getElementById('add-card');
+            const logoutButton = document.getElementById('logout-button');
+
+            const addButton = document.getElementById('add-button');
+            const cardTitleInput = document.getElementById('card-title');
+            const cardCodeInput = document.getElementById('card-code');
+            const cardsContainer = document.querySelector('.cards-container');
+            const searchInput = document.getElementById('search-input');
+            const gridViewButton = document.getElementById('grid-view-button');
+            const listViewButton = document.getElementById('list-view-button');
+
+            let allCards = []; // Armazena todos os cards carregados do Firestore
+            let currentView = 'grid'; // 'grid' ou 'list'
+            const maxCards = 50; // Define o limite máximo de cards
+            const colors = ["#3498db", "#e74c3c", "#f39c12", "#9b59b6", "#2ecc71"]; // Array de cores
+
+            // Função para obter uma cor aleatória
+            function getRandomColor() {
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            // Função para criar um card no Firestore
+            async function createCardInFirestore(title, code, backgroundColor) {
+                try {
+                     // Verifica se o limite de cards foi atingido
+                    if (allCards.length >= maxCards) {
+                        alert('Limite máximo de 50 cards atingido.');
+                        return null;
+                    }
+
+                    const docRef = await db.collection("cards").add({
+                        title: title,
+                        code: code,
+                        backgroundColor: backgroundColor
+                    });
+                    console.log("Card adicionado com ID: ", docRef.id);
+                    return docRef.id;
+                } catch (error) {
+                    console.error("Erro ao adicionar card: ", error);
+                    return null;
+                }
+            }
+
+            // Função para atualizar um card no Firestore
+            async function updateCardInFirestore(cardId, title, code) {
+                try {
+                    await db.collection("cards").doc(cardId).update({
+                        title: title,
+                        code: code
+                    });
+                    console.log("Card atualizado com ID: ", cardId);
+                } catch (error) {
+                    console.error("Erro ao atualizar card: ", error);
+                }
+            }
+
+            // Função para criar um card na interface
+            function createCardElement(title, code, id, backgroundColor) {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.id = id;
+                card.style.backgroundColor = backgroundColor;
+
+                const titleElement = document.createElement('h3');
+                titleElement.textContent = title;
+
+                const codeContainer = document.createElement('div');
+                codeContainer.classList.add('code-container');
+
+                const codeElement = document.createElement('pre');
+                codeElement.textContent = code;
+
+                const codeTextarea = document.createElement('textarea');
+                codeTextarea.value = code;
+
+                codeContainer.appendChild(codeElement);
+                codeContainer.appendChild(codeTextarea);
+
+                const cardButtons = document.createElement('div');
+                cardButtons.classList.add('card-buttons');
+
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copiar';
+                copyButton.classList.add('copy-button');
+                copyButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    navigator.clipboard.writeText(codeTextarea.value).then(() => {
+                        alert('Código copiado para a área de transferência!');
+                    }).catch(err => {
+                        console.error('Falha ao copiar código: ', err);
+                        alert('Falha ao copiar código!');
+                    });
+                });
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.classList.add('delete-button');
+                deleteButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    deleteCard(id);
+                });
+
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.classList.add('edit-button');
+                editButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    card.classList.add('edit-mode');
+                });
+
+                const saveButton = document.createElement('button');
+                saveButton.textContent = 'Salvar';
+                saveButton.classList.add('save-button');
+                saveButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const newTitle = titleElement.textContent;
+                    const newCode = codeTextarea.value;
+                    updateCardInFirestore(id, newTitle, newCode).then(() => {
+                        titleElement.textContent = newTitle;
+                        codeElement.textContent = newCode;
+                        codeTextarea.value = newCode;
+                        card.classList.remove('edit-mode');
+                    });
+                });
+
+                cardButtons.appendChild(copyButton);
+                cardButtons.appendChild(deleteButton);
+                cardButtons.appendChild(editButton);
+                cardButtons.appendChild(saveButton);
+
+                card.appendChild(titleElement);
+                card.appendChild(codeContainer);
+                card.appendChild(cardButtons);
+
+                card.addEventListener('click', function() {
+                    codeContainer.style.display = codeContainer.style.display === 'block' ? 'none' : 'block';
+                });
+
+                return card;
+            }
+
+            // Função para adicionar um card ao container
+            function addCardToContainer(title, code, id, backgroundColor) {
+                const card = createCardElement(title, code, id, backgroundColor);
+                cardsContainer.appendChild(card);
+            }
+
+            // Função para carregar os cards do Firestore
+            async function loadCardsFromFirestore() {
+                try {
+                    const querySnapshot = await db.collection("cards").get();
+                    allCards = []; // Limpa o array antes de carregar os novos cards
+                    querySnapshot.forEach(doc => {
+                        const cardData = {
+                            id: doc.id,
+                            title: doc.data().title,
+                            code: doc.data().code,
+                            backgroundColor: doc.data().backgroundColor
+                        };
+                        allCards.push(cardData);
+                    });
+                    renderCards(allCards); // Exibe todos os cards na visualização atual
+                } catch (error) {
+                    console.error("Erro ao carregar cards: ", error);
+                }
+            }
+
+            // Função para filtrar os cards com base na busca
+            function filterCards(searchTerm) {
+                const filteredCards = allCards.filter(card => {
+                    const title = card.title.toLowerCase();
+                    const code = card.code.toLowerCase();
+                    const term = searchTerm.toLowerCase();
+                    return title.includes(term) || code.includes(term);
+                });
+                return filteredCards;
+            }
+
+            // Função para exibir os cards na tela
+            function renderCards(cards) {
+                cardsContainer.innerHTML = ''; // Limpa o container
+                cards.forEach(card => {
+                    addCardToContainer(card.title, card.code, card.id, card.backgroundColor);
+                });
+            }
+
+            // Função para excluir um card do Firestore
+            async function deleteCard(cardId) {
+                try {
+                    await db.collection("cards").doc(cardId).delete();
+                    console.log("Card excluído com ID: ", cardId);
+
+                    // Remove o card do array allCards
+                    allCards = allCards.filter(card => card.id !== cardId);
+
+                    // Atualiza a exibição dos cards
+                    renderCards(allCards);
+                } catch (error) {
+                    console.error("Erro ao excluir card: ", error);
+                }
+            }
+
+            // Função para lidar com o logout
+            async function logout() {
+                try {
+                    await auth.signOut();
+                    console.log("Usuário deslogado");
+
+                    // Mostra a seção de login e esconde a seção de adicionar card
+                    loginSection.style.display = 'block';
+                    addCardSection.style.display = 'none';
+                } catch (error) {
+                    console.error("Erro ao fazer logout:", error.message);
+                }
+            }
+
+            // Adiciona um ouvinte de eventos para o botão de logout
+            logoutButton.addEventListener('click', async function() {
+                logout();
+            });
+
+            // Função para lidar com o login
+            async function login(email, password) {
+                try {
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    console.log("Usuário logado:", user);
+
+                    // Esconde a seção de login e mostra a seção de adicionar card
+                    loginSection.style.display = 'none';
+                    addCardSection.style.display = 'block';
+
+                    // Carrega os cards do Firestore
+                    loadCardsFromFirestore();
+                } catch (error) {
+                    console.error("Erro ao fazer login:", error.message);
+                    alert("Email ou senha incorretos.");
+                }
+            }
+
+            // Adiciona um ouvinte de eventos para o botão de login
+            loginButton.addEventListener('click', async function() {
+                const email = emailInput.value;
+                const password = passwordInput.value;
+                login(email, password);
+            });
+
+             // Adiciona um ouvinte de eventos para limitar o número de cards
+             addButton.addEventListener('click', async function() {
+                const title = cardTitleInput.value;
+                const code = cardCodeInput.value;
+
+                if (allCards.length >= maxCards) {
+                        alert('Limite máximo de 50 cards atingido.');
+                        return;
+                    }
+
+                if (title && code) {
+                    const backgroundColor = getRandomColor();
+                        const cardId = await createCardInFirestore(title, code, backgroundColor);
+                        if (cardId) {
+                            // Adiciona o novo card ao array allCards
+                            allCards.push({
+                                id: cardId,
+                                title: title,
+                                code: code,
+                                backgroundColor: backgroundColor
+                            });
+                            renderCards(allCards); // Exibe todos os cards na visualização atual
+                            cardTitleInput.value = '';
+                            cardCodeInput.value = '';
+                        }
+                    } else {
+                        alert('Por favor, preencha o título e o código.');
+                    }
+                });
+
+            // Evento de input na barra de busca
+            searchInput.addEventListener('input', function() {
+                const searchTerm = searchInput.value;
+                const filteredCards = filterCards(searchTerm);
+                renderCards(filteredCards); // Exibe os cards filtrados
+            });
+
+            // Evento de clique no botão "Grid"
+            gridViewButton.addEventListener('click', function() {
+                currentView = 'grid';
+                cardsContainer.classList.remove('list-view');
+                renderCards(allCards); // Exibe todos os cards na visualização grid
+            });
+
+            // Evento de clique no botão "Lista"
+            listViewButton.addEventListener('click', function() {
+                currentView = 'list';
+                cardsContainer.classList.add('list-view');
+                renderCards(allCards); // Exibe todos os cards na visualização lista
+            });
+
+             // Realiza o login automático se o usuário já estiver autenticado
+             auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                     // Esconde a seção de login e mostra a seção de adicionar card
+                    loginSection.style.display = 'none';
+                    addCardSection.style.display = 'block';
+
+                    // Carrega os cards do Firestore
+                    loadCardsFromFirestore();
+                }
+            });
+
+            // Login automático
+            login('ricardoromanos1489@hotmail.com', 'rik159');
+        });
+    </script>
+</body>
+</html>
