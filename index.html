@@ -1,1409 +1,767 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Site de Cards de Código</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="description" content="Portfólio de Projetos - João Ricardo">
+    <meta name="author" content="João Ricardo">
+    <title>João Ricardo - Portfólio de Projetos</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome via CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
-        :root {
-            /* Cores padrão (podem ser alteradas pelo usuário) */
-            --primary-color: #4a00e0;
-            --secondary-color: #ff3e6c;
-            --accent-color: #00ff88;
-            --text-color: #ffffff;
-            --bg-color: #0f0c29;
-            --card-bg-color: #24243e;
-            --filter-bg-color: #1a1a2e;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --light-theme-bg: #f0f0f0;
-            --light-theme-text: #333;
-            --light-theme-card-bg: #ffffff;
-            --light-theme-filter-bg: #e6f0ff;
-            --light-theme-border: #333;
-            --sun-color: #ffeb3b;
+        /* Estilos Essenciais */
+        .project-card {
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--bg-color) 0%, #141e30 100%);
-            color: var(--text-color);
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        body.light-theme {
-            background: var(--light-theme-bg);
-            color: var(--light-theme-text);
-        }
-
-        body.light-theme header,
-        body.light-theme footer,
-        body.light-theme #search-bar,
-        body.light-theme #add-edit-card,
-        body.light-theme .card {
-            background: var(--light-theme-card-bg);
-            color: var(--light-theme-text);
-            border: 1px solid var(--light-theme-border);
-        }
-
-        body.light-theme #filter-bar {
-            background: var(--light-theme-filter-bg);
-            border: 1px solid var(--light-theme-border);
-        }
-
-        body.light-theme h1,
-        body.light-theme h2,
-        body.light-theme h3 {
-            background: none;
-            -webkit-text-fill-color: var(--light-theme-text);
-        }
-
-        body.light-theme #logout-button,
-        body.light-theme #save-button,
-        body.light-theme #cancel-button,
-        body.light-theme .card-actions button {
-            color: var(--text-color);
-        }
-
-        body.light-theme #theme-toggle i.fa-sun {
-            color: var(--sun-color);
-        }
-
-        header {
-            background: rgba(10, 10, 30, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-        }
-
-        header h1 {
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: clamp(0.5rem, 2vw, 1rem);
-            align-items: center;
-            position: relative;
-        }
-
-        #theme-toggle,
-        #logout-button,
-        #settings-toggle {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            padding: 0.5rem;
-        }
-
-        #logout-button {
-            background: linear-gradient(45deg, var(--secondary-color), #ff6b6b);
-            border-radius: 25px;
-            padding: clamp(0.4rem, 1.5vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        #theme-toggle:hover,
-        #logout-button:hover,
-        #settings-toggle:hover {
-            transform: translateY(-2px);
-        }
-
-        #settings-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--card-bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            display: none;
-            flex-direction: column;
-            gap: 1rem;
-            z-index: 1000;
-            min-width: 250px;
-        }
-
-        body.light-theme #settings-menu {
-            background: var(--light-theme-card-bg);
-            border: 1px solid var(--light-theme-border);
-        }
-
-        #settings-menu.active {
-            display: flex;
-        }
-
-        #settings-menu label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        #settings-menu input[type="color"] {
-            width: 50px;
-            height: 30px;
-            border: none;
-            cursor: pointer;
-        }
-
-        #settings-menu button {
-            padding: 0.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            color: var(--text-color);
-            transition: transform 0.3s ease;
-        }
-
-        #settings-menu button:hover {
-            transform: translateY(-2px);
-        }
-
-        #scroll-top-button {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: clamp(40px, 10vw, 50px);
-            height: clamp(40px, 10vw, 50px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        .project-card.hidden-card {
             opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out,
+                        visibility 0s linear 0.3s, max-height 0s linear 0.3s,
+                        margin 0s linear 0.3s, padding 0s linear 0.3s, border 0s linear 0.3s;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-            z-index: 1000;
-            font-size: clamp(1rem, 3vw, 1.2rem);
-        }
-
-        body.light-theme #scroll-top-button {
-            border: 1px solid var(--light-theme-border);
-        }
-
-        #scroll-top-button.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        #scroll-top-button:hover {
-            transform: translateY(-5px);
-        }
-
-        main {
-            flex: 1;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        #login-section {
-            background: rgba(36, 36, 62, 0.95);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 400px;
-            margin: auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        #login-section h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        #login-section input {
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-            border-radius: 8px;
-            transition: border-color 0.3s ease;
-        }
-
-        #login-section input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        #login-section button {
-            width: 100%;
-            padding: 0.8rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            border-radius: 8px;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        #login-section button:hover {
-            transform: translateY(-2px);
-        }
-
-        #search-bar {
-            display: flex;
-            gap: 1rem;
-            background: var(--card-bg-color);
-            padding: 1rem;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 600px;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-        }
-
-        #search-bar input {
-            flex: 1;
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-            border-radius: 8px;
-        }
-
-        body.light-theme #search-bar input {
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--light-theme-text);
-            border: 1px solid var(--light-theme-border);
-        }
-
-        #search-bar input:focus {
-            outline: none;
-        }
-
-        #view-options button {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-            font-size: clamp(1rem, 2vw, 1.2rem);
-        }
-
-        #view-options button:hover {
-            color: var(--accent-color);
-        }
-
-        #add-edit-card {
-            background: var(--card-bg-color);
-            padding: 1.5rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            width: 100%;
-            max-width: 600px;
-            border: 1px solid var(--border-color);
-        }
-
-        #add-edit-card h2 {
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-        }
-
-        #preview-container {
-            width: 100%;
-            height: 200px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
+            max-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-width: 0 !important;
             overflow: hidden;
         }
 
-        body.light-theme #preview-container {
-            border: 1px solid var(--light-theme-border);
+        /* Imagem nos Cards */
+        .project-card figure {
+            width: 100%;
+            height: 200px; /* Altura fixa inicial, ajustada por media queries */
+            margin: 0;
+            overflow: hidden;
         }
-
-        #preview-iframe {
+        .project-card img {
             width: 100%;
             height: 100%;
-            border: none;
-            background-color: white;
-        }
-
-        #add-edit-card input,
-        #add-edit-card textarea {
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-            border-radius: 8px;
-        }
-
-        body.light-theme #add-edit-card input,
-        body.light-theme #add-edit-card textarea {
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--light-theme-text);
-            border: 1px solid var(--light-theme-border);
-        }
-
-        #add-edit-card textarea {
-            height: 120px;
-            resize: vertical;
-        }
-
-        #language-checkboxes {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        #language-checkboxes label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        #language-checkboxes input[type="checkbox"] {
-            accent-color: var(--primary-color);
-        }
-
-        #add-edit-card button {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-right: 1rem;
+            object-fit: cover;
             transition: transform 0.3s ease;
         }
-
-        #save-button {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+        .project-card:hover img {
+            transform: scale(1.1);
         }
 
-        #cancel-button {
-            background: linear-gradient(45deg, var(--secondary-color), #ff6b6b);
-        }
-
-        #save-button:hover,
-        #cancel-button:hover {
-            transform: translateY(-2px);
-        }
-
-        #card-list {
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        #card-list h2 {
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        #filter-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-            background: var(--filter-bg-color);
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-        }
-
-        #filter-bar select {
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.3s ease;
-        }
-
-        body.light-theme #filter-bar select {
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--light-theme-text);
-            border: 1px solid var(--light-theme-border);
-        }
-
-        #filter-bar select:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        body.light-theme #filter-bar select:hover {
-            background: rgba(255, 255, 255, 1);
-        }
-
-        #filter-bar select:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--primary-color);
-        }
-
-        body.light-theme #filter-bar select:focus {
-            background: rgba(255, 255, 255, 1);
-        }
-
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            width: 100%;
-        }
-
-        .cards-container.list-view .card {
-            grid-template-columns: 1fr;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card {
-            background: var(--card-bg-color);
-            border-radius: 15px;
-            padding: 1.5rem;
-            position: relative;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .card h3 {
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .card .code-container {
-            display: none;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        body.light-theme .card .code-container {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .card pre {
-            margin: 0;
-            white-space: pre-wrap;
-            word-break: break-all;
-            font-size: 0.9rem;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-actions button {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: transform 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .card-actions button:hover {
-            transform: translateY(-2px);
-        }
-
-        .card-actions .copy-button {
-            background: linear-gradient(45deg, #00c6ff, #0072ff);
-        }
-
-        .card-actions .edit-button {
-            background: linear-gradient(45deg, #ff8a00, #e52e71);
-        }
-
-        .card-actions .delete-button {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-        }
-
-        .card .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .card .tag {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            color: var(--text-color);
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            text-transform: lowercase;
-        }
-
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            background: rgba(10, 10, 30, 0.95);
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            border: 1px solid var(--border-color);
-        }
-
-        @media (max-width: 768px) {
-            .cards-container {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            #search-bar {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            #search-bar input {
-                width: 100%;
-            }
-
-            #add-edit-card {
-                padding: 1rem;
-            }
-
-            #preview-container {
+        /* Responsividade para Imagens */
+        @media (max-width: 640px) {
+            .project-card figure {
                 height: 150px;
             }
-
-            header {
-                padding: 1rem;
-            }
-
-            #logout-button {
-                padding: 0.5rem 0.8rem;
-            }
-
-            #filter-bar {
-                grid-template-columns: 1fr;
-                padding: 1rem;
-            }
-
-            #scroll-top-button {
-                bottom: 1.5rem;
-                right: 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            .project-card figure {
+                height: 250px;
             }
         }
 
-        @media (max-width: 480px) {
-            main {
-                padding: 1rem;
+        /* Estilos para Layout de Lista */
+        #project-gallery.list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        #project-gallery.list-view {
+            grid-template-columns: 1fr !important;
+        }
+        #project-gallery.list-view .project-card {
+            flex-direction: column;
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+            visibility: visible;
+            max-height: none;
+            margin: revert !important;
+            padding: revert !important;
+            border: revert !important;
+            overflow: visible;
+        }
+        @media (min-width: 768px) {
+            #project-gallery.list-view .project-card {
+                flex-direction: row;
             }
+            #project-gallery.list-view .project-card figure {
+                width: 25%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+            }
+            #project-gallery.list-view .project-card .card-content {
+                flex-grow: 1;
+            }
+        }
+        @media (min-width: 1024px) {
+            #project-gallery.list-view .project-card figure {
+                width: 20%;
+            }
+        }
 
-            #login-section {
-                padding: 1rem;
-                max-width: 90%;
-            }
+        /* Modal e Fullscreen */
+        #previewModal {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        #previewModal:not(.hidden) {
+            opacity: 1;
+            visibility: visible;
+        }
+        #previewModal .modal-content {
+            transition: all 0.3s ease-in-out;
+            transform: scale(0.95);
+            width: 90%;
+            max-width: 1000px;
+            height: 80vh;
+        }
+        #previewModal:not(.hidden) .modal-content {
+            transform: scale(1);
+        }
+        #previewModal.fullscreen .modal-content {
+            width: 100%;
+            height: 100vh;
+            max-width: none;
+            border-radius: 0;
+        }
+        #previewIframe {
+            background-color: #e5e7eb;
+        }
+        .dark #previewIframe {
+            background-color: #4b5563;
+        }
 
-            .card-actions button {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-            }
-
-            #add-edit-card input,
-            #add-edit-card textarea {
-                font-size: 0.9rem;
-            }
-
-            #add-edit-card {
-                padding: 0.8rem;
-            }
-
-            #card-list h2 {
-                font-size: 1.2rem;
-            }
-
-            .card .tag {
-                font-size: 0.7rem;
-                padding: 0.2rem 0.6rem;
-            }
-
-            #language-checkboxes {
-                gap: 0.8rem;
-            }
-
-            #settings-menu {
-                min-width: 200px;
-            }
+        /* Painel de Adicionar Projeto */
+        #addProjectPanel {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transform: translateY(100%);
+            opacity: 1;
+            pointer-events: none;
+            max-height: 80vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #a0aec0 #e5e7eb;
+        }
+        #addProjectPanel::-webkit-scrollbar {
+            width: 6px;
+        }
+        #addProjectPanel::-webkit-scrollbar-thumb {
+            background-color: #a0aec0;
+            border-radius: 3px;
+        }
+        #addProjectPanel::-webkit-scrollbar-track {
+            background-color: #e5e7eb;
+        }
+        .dark #addProjectPanel {
+            scrollbar-color: #4b5563 #1f2937;
+        }
+        .dark #addProjectPanel::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+        }
+        .dark #addProjectPanel::-webkit-scrollbar-track {
+            background-color: #1f2937;
+        }
+        #addProjectPanel:not(.hidden) {
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        #addProjectPanel.hidden {
+            opacity: 0;
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
-</head>
-<body>
-    <header style="display: none;">
-        <h1>Meu Site de Cards de Código</h1>
-        <div class="header-actions">
-            <button id="theme-toggle" title="Alternar tema"><i class="fas fa-moon"></i></button>
-            <button id="settings-toggle" title="Configurações"><i class="fas fa-cog"></i></button>
-            <div id="settings-menu">
-                <label>Cor Primária: <input type="color" id="primary-color-picker" value="#4a00e0"></label>
-                <label>Cor Secundária: <input type="color" id="secondary-color-picker" value="#ff3e6c"></label>
-                <label>Cor de Destaque: <input type="color" id="accent-color-picker" value="#00ff88"></label>
-                <label>Cor do Texto: <input type="color" id="text-color-picker" value="#ffffff"></label>
-                <label>Cor de Fundo: <input type="color" id="bg-color-picker" value="#0f0c29"></label>
-                <label>Cor dos Cards: <input type="color" id="card-bg-color-picker" value="#24243e"></label>
-                <label>Cor dos Filtros: <input type="color" id="filter-bg-color-picker" value="#1a1a2e"></label>
-                <label>Cor da Borda: <input type="color" id="border-color-picker" value="#ffffff19"></label>
-                <button id="reset-theme">Restaurar Tema Original</button>
-                <button id="backup-theme">Fazer Backup do Tema</button>
-                <button id="restore-theme">Restaurar Backup do Tema</button>
-            </div>
-            <button id="logout-button"><i class="fas fa-sign-out-alt"></i> Sair</button>
-        </div>
-    </header>
-
-    <main>
-        <section id="login-section">
-            <h2>Login</h2>
-            <input type="email" id="email-input" placeholder="Email" value="ricardoromanos1489@hotmail.com">
-            <input type="password" id="password-input" placeholder="Senha" value="rik159">
-            <button id="login-button">Entrar</button>
-        </section>
-
-        <section id="search-bar" style="display: none;">
-            <input type="text" id="search-input" placeholder="Buscar cards...">
-            <div id="view-options">
-                <button id="grid-view-button"><i class="fas fa-th-large"></i></button>
-                <button id="list-view-button"><i class="fas fa-list"></i></button>
-            </div>
-        </section>
-
-        <section id="add-edit-card" style="display: none;">
-            <h2>Adicionar/Editar Card</h2>
-            <div id="preview-container">
-                <iframe id="preview-iframe"></iframe>
-            </div>
-            <input type="hidden" id="card-id">
-            <input type="text" id="card-title" placeholder="Título do Card">
-            <textarea id="card-code" placeholder="Código"></textarea>
-            <div id="language-checkboxes">
-                <label><input type="checkbox" name="language" value="html"> HTML</label>
-                <label><input type="checkbox" name="language" value="css"> CSS</label>
-                <label><input type="checkbox" name="language" value="javascript"> JavaScript</label>
-                <label><input type="checkbox" name="language" value="python"> Python</label>
-            </div>
-            <button id="save-button"><i class="fas fa-save"></i> Salvar</button>
-            <button id="cancel-button"><i class="fas fa-times"></i> Cancelar</button>
-        </section>
-
-        <section id="card-list" style="display: none;">
-            <h2>Meus Cards</h2>
-            <div id="filter-bar">
-                <select id="filter-language">
-                    <option value="">Filtrar por linguagem</option>
-                    <option value="html">HTML</option>
-                    <option value="css">CSS</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="python">Python</option>
-                </select>
-                <select id="filter-tag">
-                    <option value="">Filtrar por tag</option>
-                </select>
-                <select id="filter-sort">
-                    <option value="">Ordenar por</option>
-                    <option value="title-asc">Título (A-Z)</option>
-                    <option value="title-desc">Título (Z-A)</option>
-                    <option value="date-asc">Data (Mais antigo)</option>
-                    <option value="date-desc">Data (Mais recente)</option>
-                </select>
-            </div>
-            <div class="cards-container" id="cards-container">
-                <!-- Cards serão adicionados aqui -->
-            </div>
-        </section>
-    </main>
-
-    <button id="scroll-top-button" title="Subir ao topo"><i class="fas fa-chevron-up"></i></button>
-
-    <footer style="display: none;">
-        <p>© 2024 Meu Site de Cards de Código</p>
-    </footer>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC0iJ0FprASJbqMaEVezRfsLF21O-zQxI4",
-            authDomain: "cloud-engenheiros.firebaseapp.com",
-            projectId: "cloud-engenheiros",
-            storageBucket: "cloud-engenheiros.firebasestorage.app",
-            messagingSenderId: "923596482018",
-            appId: "1:923596482018:web:5e388229af8a3d259b05bb",
-            measurementId: "G-D45N5WPYZ0"
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: {} }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300 flex flex-col min-h-screen">
+
+<!-- Header -->
+<header class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 sticky top-0 z-30 transition-colors duration-300">
+    <div class="container mx-auto flex flex-wrap justify-between items-center gap-4">
+        <h1 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">João Ricardo - Portfólio</h1>
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <input type="search" id="searchInput" placeholder="Buscar projetos..." class="px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm w-full sm:w-64">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <button id="darkModeToggle" class="text-xl p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <i class="fas fa-moon" id="darkModeIcon"></i>
+            </button>
+            <button id="showAddPanelBtn" title="Adicionar Novo Projeto" class="text-xl p-2 rounded-md text-green-600 dark:text-green-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <i class="fas fa-plus-circle"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="container mx-auto p-6 flex-grow">
+    <!-- Controles -->
+    <section id="controls" class="mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow controls-container">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+            <div class="flex flex-wrap gap-2 items-center filter-group" data-filter-type="tech">
+                <span class="font-medium text-sm mr-2">Tecnologias:</span>
+                <button class="filter-btn tech-filter px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-colors" data-filter="all">Todos</button>
+                <button class="filter-btn tech-filter px-3 py-1 bg-gray-200 dark:bg-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="html">HTML</button>
+                <button class="filter-btn tech-filter px-3 py-1 bg-gray-200 dark:bg-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="css">CSS</button>
+                <button class="filter-btn tech-filter px-3 py-1 bg-gray-200 dark:bg-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="javascript">JavaScript</button>
+                <button class="filter-btn tech-filter px-3 py-1 bg-gray-200 dark:bg-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter by="react">React</button>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center filter-group" data-filter-type="category">
+                <span class="font-medium text-sm mr-2">Categoria:</span>
+                <button class="filter-btn cat-filter px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-colors" data-filter="all">Todas</button>
+                <button class="filter-btn cat-filter px-3 py-1 bg-gray-200 dark:bg-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="landing-page">Landing Page</button>
+                <button class="filter-btn cat-filter px-3 py-1 bg-gray-200 dark:bg-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="portfolio">Portfólio</button>
+                <button class="filter-btn cat-filter px-3 py-1 bg-gray-200 dark:bg-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="app">Aplicação</button>
+            </div>
+            <div class="flex gap-2 items-center layout-group">
+                <span class="font-medium text-sm mr-2">Layout:</span>
+                <button class="layout-btn px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-colors" data-layout="grid" title="Grade">
+                    <i class="fas fa-th-large"></i>
+                </button>
+                <button class="layout-btn px-3 py-1 bg-gray-200 dark:bg-gray-700 text-sm rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-layout="list" title="Lista">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria de Projetos -->
+    <section id="project-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+     
+          <!-- Projeto 1: Cloud Engenharia -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="app" data-title="cloud engenharia" data-description="o projeto cloud foi desenvolvido pelo engenheiro joão ricardo...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1720551256796-624029b9dc84?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Cloud Engenharia" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Cloud Engenharia</h3>
+              <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Portfólio</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Website profissional para clínica de saúde integrativa combinando biomedicina e acupuntura.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://sorayaalaby.vercel.app/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                     </button>
+                    <a href="http://cloudeng.ezyro.com/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/cloudeng" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+         <!-- Projeto 2: Dra. Soraya Alaby -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="portfolio" data-title="dra. soraya alaby" data-description="website profissional para clínica de saúde integrativa...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1721225464945-97076602de73?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Dra. Soraya Alaby" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Dra. Soraya Alaby</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Portfólio</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Website profissional para clínica de saúde integrativa combinando biomedicina e acupuntura.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://sorayaalaby.vercel.app/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://sorayaalaby.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/biomedicaesteta" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+
+        <!-- Projeto 3: Formulário de Paciente -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="app" data-title="formulário de paciente" data-description="formulário interativo para coleta de informações de pacientes...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1720201054067-adf2837be5e4?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Formulário de Paciente" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Formulário de Paciente</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Aplicação</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Formulário interativo para coleta de informações de pacientes com persistência no localStorage.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://joaoricardobr.github.io/formularioclinica/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://joaoricardobr.github.io/formularioclinica/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/formularioclinica" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Projeto 4: Clima Agora -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="app" data-title="clima agora" data-description="aplicação web para consultar condições climáticas...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1722209813944-a4ee13b7bfd8?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Clima Agora" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Clima Agora</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Aplicação</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Aplicação web para consultar condições climáticas atuais e previsão do tempo.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://joaoricardobr.github.io/climatempo/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://joaoricardobr.github.io/climatempo/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/climatempo" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Projeto 5: Sistema de Pagamento Wi-Fi Premium -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="app" data-title="sistema de pagamento wi-fi" data-description="sistema completo para gerenciamento de pagamentos...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1720448972956-843ac01a7c51?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Sistema de Pagamento Wi-Fi Premium" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Sistema de Pagamento Wi-Fi</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Aplicação</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Sistema completo para gerenciamento de pagamentos com integração WhatsApp.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://joaoricardobr.github.io/captiveportal/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://joaoricardobr.github.io/captiveportal/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/captiveportal" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Projeto 6: Lorraine Botura -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="landing-page" data-title="lorraine botura" data-description="solução inovadora que utiliza a tecnologia de vibração...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1720448972787-3140916002b7?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Lorraine Botura" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Lorraine Botura</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Landing Page</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Solução inovadora que utiliza tecnologia de vibração oscilatória terapêutica.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://lorrainebotura.com.br/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://lorrainebotura.com.br/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="#" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0 opacity-50 cursor-not-allowed" title="Código não disponível">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Projeto 7: Vídeos Surpresa -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="app" data-title="vídeos surpresa" data-description="site que oferece uma experiência de vídeos surpresa...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1721080250995-5a83519eb2a0?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Vídeos Surpresa" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Vídeos Surpresa</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Aplicação</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Site que carrega vídeos aleatórios de categorias diversas usando a API do YouTube.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://joaoricardobr.github.io/videosurpresa/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://joaoricardobr.github.io/videosurpresa/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/videosurpresa" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Projeto 8: Filtros Fotos -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="app" data-title="filtros fotos" data-description="efeitos de fotos do fotor podem, de forma fácil...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1722169898948-5c7fa92f4042?q=80&w=1622&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Filtros Fotos" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Filtros Fotos</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Aplicação</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Efeitos de fotos para edição fácil e inspirada em diferentes estilos visuais.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://instafix-pi.vercel.app/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://instafix-pi.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/instafix" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Projeto 9: Upload e Processamento de Planilhas -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="app" data-title="upload e processamento de planilhas" data-description="aplicativo web para upload e processamento de planilhas...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1720210118027-19efec2959b4?q=80&w=1766&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Upload e Processamento de Planilhas" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Upload e Processamento de Planilhas</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Aplicação</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Aplicativo web para upload e processamento de planilhas em formatos como CSV, XLS e XLSX.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://joaoricardobr.github.io/extratordedadosexcel/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://joaoricardobr.github.io/extratordedadosexcel/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/extratordedadosexcel" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Projeto 10: Apostila Concurso Biomédico EBSERH 2025 -->
+        <article class="project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" data-technologies="html,css,javascript" data-category="portfolio" data-title="apostila concurso biomédico" data-description="apostila completa para o concurso biomédico ebserh 2025...">
+            <figure>
+                <img src="https://plus.unsplash.com/premium_photo-1720210118039-47390f1158a5?q=80&w=1604&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Preview de Apostila Concurso Biomédico EBSERH 2025" loading="lazy">
+            </figure>
+            <div class="p-4 flex flex-col flex-grow card-content">
+                <h3 class="text-lg font-semibold mb-1">Apostila Concurso Biomédico</h3>
+                <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">Portfólio</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">html</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">css</span>
+                    <span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">javascript</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Apostila completa para o Concurso Biomédico EBSERH 2025.</p>
+                <div class="mt-auto flex flex-wrap gap-2 items-center">
+                    <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="https://joaoricardobr.github.io/apostilaconcurso/">
+                        <i class="fas fa-eye mr-1"></i> Ver Preview
+                    </button>
+                    <a href="https://joaoricardobr.github.io/apostilaconcurso/" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                    </a>
+                    <a href="https://github.com/joaoricardobr/apostilaconcurso" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                        <i class="fab fa-github mr-1"></i> Código
+                    </a>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
+
+<!-- Painel Flutuante para Adicionar Projeto -->
+<aside id="addProjectPanel" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-lg p-6 rounded-t-lg z-40 hidden">
+    <div class="container mx-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Adicionar Novo Projeto</h2>
+            <button id="hideAddPanelBtn" class="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 text-2xl p-1">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="addProjectForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label for="projectTitle" class="block text-sm font-medium mb-1">Título</label><input type="text" id="projectTitle" name="title" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"></div>
+            <div><label for="projectCategory" class="block text-sm font-medium mb-1">Categoria</label><select id="projectCategory" name="category" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="landing-page">Landing Page</option><option value="portfolio">Portfólio</option><option value="app">Aplicação</option></select></div>
+            <div class="md:col-span-2"><label for="projectDescription" class="block text-sm font-medium mb-1">Descrição Curta</label><textarea id="projectDescription" name="description" rows="2" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea></div>
+            <div><label for="projectImageUrl" class="block text-sm font-medium mb-1">URL da Imagem</label><input type="url" id="projectImageUrl" name="imageUrl" required placeholder="https://source.unsplash.com/..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"></div>
+            <div><label for="projectLiveUrl" class="block text-sm font-medium mb-1">URL do Site</label><input type="url" id="projectLiveUrl" name="liveUrl" required placeholder="https://example.com" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"></div>
+            <div><label for="projectCodeUrl" class="block text-sm font-medium mb-1">URL do Código (opcional)</label><input type="url" id="projectCodeUrl" name="codeUrl" placeholder="https://github.com/..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"></div>
+            <div><label for="projectTechs" class="block text-sm font-medium mb-1">Tecnologias (separadas por vírgula)</label><input type="text" id="projectTechs" name="technologies" required placeholder="html,css,javascript" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"></div>
+            <div class="md:col-span-2 flex justify-end"><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition-colors"><i class="fas fa-plus mr-2"></i>Adicionar Projeto</button></div>
+            <p id="formMessage" class="md:col-span-2 text-sm mt-2"></p>
+        </form>
+    </div>
+</aside>
+
+<!-- Modal de Preview -->
+<div id="previewModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
+    <div class="modal-content bg-white dark:bg-gray-800 rounded-lg shadow-xl flex flex-col overflow-hidden">
+        <div class="flex justify-between items-center p-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <h4 class="text-lg font-semibold truncate pr-2" id="modalTitle">Preview do Projeto</h4>
+            <div class="flex gap-2">
+                <button id="fullscreenButton" class="text-gray-500 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400 text-xl p-1">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button id="closeModalButton" class="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 text-xl p-1">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="flex-grow overflow-hidden">
+            <iframe id="previewIframe" src="about:blank" frameborder="0" class="w-full h-full"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-400 py-4 text-center mt-auto">
+    <div class="container mx-auto">
+        <p class="text-sm">© 2025 João Ricardo. Todos os direitos reservados.</p>
+        <p class="text-sm">Feito com ❤️ por <a href="https://github.com/joaoricardobr" target="_blank" class="text-indigo-400 hover:underline">João Ricardo</a>.</p>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let currentFilters = { tech: 'all', category: 'all', search: '' };
+        let currentLayout = localStorage.getItem('layout') || 'grid';
+
+        const gallery = document.getElementById('project-gallery');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        const controlsContainer = document.querySelector('.controls-container');
+        const searchInput = document.getElementById('searchInput');
+        const modal = document.getElementById('previewModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const fullscreenButton = document.getElementById('fullscreenButton');
+        const previewIframe = document.getElementById('previewIframe');
+        const addProjectPanel = document.getElementById('addProjectPanel');
+        const showAddPanelBtn = document.getElementById('showAddPanelBtn');
+        const hideAddPanelBtn = document.getElementById('hideAddPanelBtn');
+        const addProjectForm = document.getElementById('addProjectForm');
+        const formMessage = document.getElementById('formMessage');
+
+        const updateButtonActiveState = (groupSelector, activeValue, dataAttr) => {
+            const buttons = controlsContainer.querySelectorAll(`${groupSelector} button[${dataAttr}]`);
+            buttons.forEach(btn => {
+                const isActive = btn.getAttribute(dataAttr) === activeValue;
+                btn.classList.toggle('bg-indigo-600', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('bg-gray-200', !isActive);
+                btn.classList.toggle('dark:bg-gray-700', !isActive);
+                btn.classList.toggle('hover:bg-indigo-700', isActive);
+                btn.classList.toggle('dark:hover:bg-indigo-500', isActive);
+                btn.classList.toggle('hover:bg-gray-300', !isActive);
+                btn.classList.toggle('dark:hover:bg-gray-600', !isActive);
+            });
         };
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const applyTheme = (theme) => {
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+            darkModeIcon.className = `fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`;
+            localStorage.setItem('theme', theme);
+        };
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(savedTheme);
+        darkModeToggle.addEventListener('click', () => applyTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark'));
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const header = document.querySelector('header');
-            const loginSection = document.getElementById('login-section');
-            const emailInput = document.getElementById('email-input');
-            const passwordInput = document.getElementById('password-input');
-            const loginButton = document.getElementById('login-button');
-            const addEditCardSection = document.getElementById('add-edit-card');
-            const logoutButton = document.getElementById('logout-button');
-            const themeToggle = document.getElementById('theme-toggle');
-            const settingsToggle = document.getElementById('settings-toggle');
-            const settingsMenu = document.getElementById('settings-menu');
-            const searchBar = document.getElementById('search-bar');
-            const searchInput = document.getElementById('search-input');
-            const gridViewButton = document.getElementById('grid-view-button');
-            const listViewButton = document.getElementById('list-view-button');
-            const cardsContainer = document.getElementById('cards-container');
-            const cardListSection = document.getElementById('card-list');
-            const filterLanguage = document.getElementById('filter-language');
-            const filterTag = document.getElementById('filter-tag');
-            const filterSort = document.getElementById('filter-sort');
-            const scrollTopButton = document.getElementById('scroll-top-button');
-            const footer = document.querySelector('footer');
-
-            const cardIdInput = document.getElementById('card-id');
-            const cardTitleInput = document.getElementById('card-title');
-            const cardCodeInput = document.getElementById('card-code');
-            const saveButton = document.getElementById('save-button');
-            const cancelButton = document.getElementById('cancel-button');
-            const previewIframe = document.getElementById('preview-iframe');
-            const languageCheckboxes = document.querySelectorAll('#language-checkboxes input[type="checkbox"]');
-
-            const primaryColorPicker = document.getElementById('primary-color-picker');
-            const secondaryColorPicker = document.getElementById('secondary-color-picker');
-            const accentColorPicker = document.getElementById('accent-color-picker');
-            const textColorPicker = document.getElementById('text-color-picker');
-            const bgColorPicker = document.getElementById('bg-color-picker');
-            const cardBgColorPicker = document.getElementById('card-bg-color-picker');
-            const filterBgColorPicker = document.getElementById('filter-bg-color-picker');
-            const borderColorPicker = document.getElementById('border-color-picker');
-            const resetThemeButton = document.getElementById('reset-theme');
-            const backupThemeButton = document.getElementById('backup-theme');
-            const restoreThemeButton = document.getElementById('restore-theme');
-
-            let allCards = [];
-            let allTags = new Set();
-            const colors = ["#4a00e0", "#ff3e6c", "#00ff88", "#9b59b6", "#2ecc71"];
-            let loggedIn = false;
-
-            const defaultTheme = {
-                '--primary-color': '#4a00e0',
-                '--secondary-color': '#ff3e6c',
-                '--accent-color': '#00ff88',
-                '--text-color': '#ffffff',
-                '--bg-color': '#0f0c29',
-                '--card-bg-color': '#24243e',
-                '--filter-bg-color': '#1a1a2e',
-                '--border-color': 'rgba(255, 255, 255, 0.1)'
-            };
-
-            function toggleTheme() {
-                document.body.classList.toggle('light-theme');
-                const isLight = document.body.classList.contains('light-theme');
-                themeToggle.innerHTML = `<i class="fas ${isLight ? 'fa-sun' : 'fa-moon'}"></i>`;
-                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        const applyLayout = (layout) => {
+            gallery.classList.remove('grid', 'grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'list-view', 'gap-6');
+            if (layout === 'grid') {
+                gallery.classList.add('grid', 'grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'gap-6');
+            } else if (layout === 'list') {
+                gallery.classList.add('list-view');
             }
+            updateButtonActiveState('.layout-group', layout, 'data-layout');
+            currentLayout = layout;
+            localStorage.setItem('layout', layout);
+            filterAndSearchProjects();
+        };
 
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
+        const filterAndSearchProjects = () => {
+            const searchTerm = currentFilters.search.toLowerCase().trim();
+            const allCards = gallery.querySelectorAll('.project-card');
+            allCards.forEach(card => {
+                const techs = (card.dataset.technologies || '').toLowerCase();
+                const category = (card.dataset.category || '').toLowerCase();
+                const title = (card.dataset.title || '').toLowerCase();
+                const desc = (card.dataset.description || '').toLowerCase();
 
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    scrollTopButton.classList.add('visible');
-                } else {
-                    scrollTopButton.classList.remove('visible');
-                }
+                const techMatch = currentFilters.tech === 'all' || techs.split(',').includes(currentFilters.tech);
+                const catMatch = currentFilters.category === 'all' || category === currentFilters.category;
+                const searchMatch = searchTerm === '' || title.includes(searchTerm) || desc.includes(searchTerm) || techs.includes(searchTerm);
+
+                card.classList.toggle('hidden-card', !(techMatch && catMatch && searchMatch));
             });
+        };
 
-            scrollTopButton.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
+        controlsContainer.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
 
-            themeToggle.addEventListener('click', toggleTheme);
-
-            settingsToggle.addEventListener('click', () => {
-                settingsMenu.classList.toggle('active');
-            });
-
-            function updateThemeColors(colors) {
-                for (const [key, value] of Object.entries(colors)) {
-                    document.documentElement.style.setProperty(key, value);
+            if (btn.matches('.filter-btn')) {
+                const group = btn.closest('.filter-group');
+                const type = group.dataset.filterType;
+                const value = btn.dataset.filter;
+                if (currentFilters[type] !== value) {
+                    currentFilters[type] = value;
+                    updateButtonActiveState(`.filter-group[data-filter-type="${type}"]`, value, 'data-filter');
+                    filterAndSearchProjects();
                 }
+            } else if (btn.matches('.layout-btn')) {
+                const layout = btn.dataset.layout;
+                if (currentLayout !== layout) applyLayout(layout);
             }
-
-            async function saveThemeToFirestore(colors) {
-                const user = auth.currentUser;
-                if (user) {
-                    await db.collection('users').doc(user.uid).set({ theme: colors }, { merge: true });
-                }
-            }
-
-            async function loadThemeFromFirestore() {
-                const user = auth.currentUser;
-                if (user) {
-                    const doc = await db.collection('users').doc(user.uid).get();
-                    if (doc.exists && doc.data().theme) {
-                        const savedColors = doc.data().theme;
-                        updateThemeColors(savedColors);
-                        primaryColorPicker.value = savedColors['--primary-color'];
-                        secondaryColorPicker.value = savedColors['--secondary-color'];
-                        accentColorPicker.value = savedColors['--accent-color'];
-                        textColorPicker.value = savedColors['--text-color'];
-                        bgColorPicker.value = savedColors['--bg-color'];
-                        cardBgColorPicker.value = savedColors['--card-bg-color'];
-                        filterBgColorPicker.value = savedColors['--filter-bg-color'];
-                        borderColorPicker.value = savedColors['--border-color'].startsWith('rgba') ? '#ffffff19' : savedColors['--border-color'];
-                    }
-                }
-            }
-
-            async function backupThemeToFirestore() {
-                const user = auth.currentUser;
-                if (user) {
-                    const currentTheme = {
-                        '--primary-color': document.documentElement.style.getPropertyValue('--primary-color') || defaultTheme['--primary-color'],
-                        '--secondary-color': document.documentElement.style.getPropertyValue('--secondary-color') || defaultTheme['--secondary-color'],
-                        '--accent-color': document.documentElement.style.getPropertyValue('--accent-color') || defaultTheme['--accent-color'],
-                        '--text-color': document.documentElement.style.getPropertyValue('--text-color') || defaultTheme['--text-color'],
-                        '--bg-color': document.documentElement.style.getPropertyValue('--bg-color') || defaultTheme['--bg-color'],
-                        '--card-bg-color': document.documentElement.style.getPropertyValue('--card-bg-color') || defaultTheme['--card-bg-color'],
-                        '--filter-bg-color': document.documentElement.style.getPropertyValue('--filter-bg-color') || defaultTheme['--filter-bg-color'],
-                        '--border-color': document.documentElement.style.getPropertyValue('--border-color') || defaultTheme['--border-color']
-                    };
-                    await db.collection('users').doc(user.uid).set({ themeBackup: currentTheme }, { merge: true });
-                    alert('Backup do tema realizado com sucesso!');
-                }
-            }
-
-            async function restoreThemeFromBackup() {
-                const user = auth.currentUser;
-                if (user) {
-                    const doc = await db.collection('users').doc(user.uid).get();
-                    if (doc.exists && doc.data().themeBackup) {
-                        const backupColors = doc.data().themeBackup;
-                        updateThemeColors(backupColors);
-                        primaryColorPicker.value = backupColors['--primary-color'];
-                        secondaryColorPicker.value = backupColors['--secondary-color'];
-                        accentColorPicker.value = backupColors['--accent-color'];
-                        textColorPicker.value = backupColors['--text-color'];
-                        bgColorPicker.value = backupColors['--bg-color'];
-                        cardBgColorPicker.value = backupColors['--card-bg-color'];
-                        filterBgColorPicker.value = backupColors['--filter-bg-color'];
-                        borderColorPicker.value = backupColors['--border-color'].startsWith('rgba') ? '#ffffff19' : backupColors['--border-color'];
-                        saveThemeToFirestore(backupColors);
-                        alert('Tema restaurado do backup com sucesso!');
-                    } else {
-                        alert('Nenhum backup de tema encontrado.');
-                    }
-                }
-            }
-
-            function handleColorChange() {
-                const newColors = {
-                    '--primary-color': primaryColorPicker.value,
-                    '--secondary-color': secondaryColorPicker.value,
-                    '--accent-color': accentColorPicker.value,
-                    '--text-color': textColorPicker.value,
-                    '--bg-color': bgColorPicker.value,
-                    '--card-bg-color': cardBgColorPicker.value,
-                    '--filter-bg-color': filterBgColorPicker.value,
-                    '--border-color': borderColorPicker.value
-                };
-                updateThemeColors(newColors);
-                saveThemeToFirestore(newColors);
-            }
-
-            primaryColorPicker.addEventListener('input', handleColorChange);
-            secondaryColorPicker.addEventListener('input', handleColorChange);
-            accentColorPicker.addEventListener('input', handleColorChange);
-            textColorPicker.addEventListener('input', handleColorChange);
-            bgColorPicker.addEventListener('input', handleColorChange);
-            cardBgColorPicker.addEventListener('input', handleColorChange);
-            filterBgColorPicker.addEventListener('input', handleColorChange);
-            borderColorPicker.addEventListener('input', handleColorChange);
-
-            resetThemeButton.addEventListener('click', () => {
-                updateThemeColors(defaultTheme);
-                primaryColorPicker.value = defaultTheme['--primary-color'];
-                secondaryColorPicker.value = defaultTheme['--secondary-color'];
-                accentColorPicker.value = defaultTheme['--accent-color'];
-                textColorPicker.value = defaultTheme['--text-color'];
-                bgColorPicker.value = defaultTheme['--bg-color'];
-                cardBgColorPicker.value = defaultTheme['--card-bg-color'];
-                filterBgColorPicker.value = defaultTheme['--filter-bg-color'];
-                borderColorPicker.value = '#ffffff19'; // Valor hexadecimal para rgba(255, 255, 255, 0.1)
-                saveThemeToFirestore(defaultTheme);
-            });
-
-            backupThemeButton.addEventListener('click', backupThemeToFirestore);
-            restoreThemeButton.addEventListener('click', restoreThemeFromBackup);
-
-            function getRandomColor() {
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            function detectLanguage(code) {
-                const lowerCode = code.toLowerCase();
-                if (lowerCode.includes('<html') || lowerCode.includes('<!doctype')) return 'html';
-                if (lowerCode.includes('{') && lowerCode.includes('}') && lowerCode.includes(':')) return 'css';
-                if (lowerCode.includes('function') || lowerCode.includes('let') || lowerCode.includes('console')) return 'javascript';
-                if (lowerCode.includes('def ') || lowerCode.includes('print(')) return 'python';
-                return 'unknown';
-            }
-
-            async function createCardInFirestore(title, code, backgroundColor, languages, tags, timestamp) {
-                const docRef = await db.collection("cards").add({
-                    title: title,
-                    code: code,
-                    backgroundColor: backgroundColor,
-                    languages: languages || [],
-                    tags: tags || [],
-                    timestamp: timestamp || firebase.firestore.FieldValue.serverTimestamp()
-                });
-                return docRef.id;
-            }
-
-            async function updateCardInFirestore(cardId, title, code, languages, tags) {
-                await db.collection("cards").doc(cardId).update({
-                    title: title,
-                    code: code,
-                    languages: languages || [],
-                    tags: tags || []
-                });
-            }
-
-            function renderIframe(code) {
-                previewIframe.contentWindow.document.open();
-                previewIframe.contentWindow.document.write(code);
-                previewIframe.contentWindow.document.close();
-            }
-
-            function clearAddEditForm() {
-                cardIdInput.value = '';
-                cardTitleInput.value = '';
-                cardCodeInput.value = '';
-                languageCheckboxes.forEach(checkbox => checkbox.checked = false);
-                renderIframe('');
-            }
-
-            function populateTagsFilter() {
-                filterTag.innerHTML = '<option value="">Filtrar por tag</option>';
-                allTags.forEach(tag => {
-                    const option = document.createElement('option');
-                    option.value = tag;
-                    option.textContent = tag;
-                    filterTag.appendChild(option);
-                });
-            }
-
-            function addCardToContainer(title, code, id, backgroundColor, languages, tags) {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                card.dataset.id = id;
-                card.dataset.languages = JSON.stringify(languages || []);
-                card.dataset.tags = JSON.stringify(tags || []);
-
-                const titleElement = document.createElement('h3');
-                titleElement.textContent = title;
-                card.appendChild(titleElement);
-
-                const codeContainer = document.createElement('div');
-                codeContainer.classList.add('code-container');
-                const codeElement = document.createElement('pre');
-                codeElement.textContent = code;
-                codeContainer.appendChild(codeElement);
-                card.appendChild(codeContainer);
-
-                card.addEventListener('click', function (e) {
-                    if (!e.target.closest('.card-actions')) {
-                        codeContainer.style.display = codeContainer.style.display === 'block' ? 'none' : 'block';
-                    }
-                });
-
-                const cardActions = document.createElement('div');
-                cardActions.classList.add('card-actions');
-
-                const copyButton = document.createElement('button');
-                copyButton.classList.add('copy-button');
-                copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
-                copyButton.addEventListener('click', function (event) {
-                    event.stopPropagation();
-                    navigator.clipboard.writeText(code).then(() => {
-                        alert('Código copiado para a área de transferência!');
-                    });
-                });
-
-                const deleteButton = document.createElement('button');
-                deleteButton.classList.add('delete-button');
-                deleteButton.innerHTML = '<i class="fas fa-trash"></i> Excluir';
-                deleteButton.addEventListener('click', function (event) {
-                    event.stopPropagation();
-                    deleteCard(id);
-                });
-
-                const editButton = document.createElement('button');
-                editButton.classList.add('edit-button');
-                editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
-                editButton.addEventListener('click', function (event) {
-                    event.stopPropagation();
-                    openEditCardForm(id);
-                });
-
-                cardActions.appendChild(copyButton);
-                cardActions.appendChild(editButton);
-                cardActions.appendChild(deleteButton);
-                card.appendChild(cardActions);
-
-                if (languages && languages.length > 0) {
-                    const tagsContainer = document.createElement('div');
-                    tagsContainer.classList.add('tags');
-                    languages.forEach(language => {
-                        const tagElement = document.createElement('span');
-                        tagElement.classList.add('tag');
-                        tagElement.textContent = language;
-                        tagsContainer.appendChild(tagElement);
-                    });
-                    if (tags && tags.length > 0) {
-                        tags.forEach(tag => {
-                            const tagElement = document.createElement('span');
-                            tagElement.classList.add('tag');
-                            tagElement.textContent = tag;
-                            tagsContainer.appendChild(tagElement);
-                        });
-                    }
-                    card.appendChild(tagsContainer);
-                }
-
-                cardsContainer.appendChild(card);
-            }
-
-            async function loadCardsFromFirestore() {
-                const querySnapshot = await db.collection("cards").get();
-                allCards = [];
-                allTags = new Set();
-                querySnapshot.forEach(doc => {
-                    const cardData = doc.data();
-                    cardData.id = doc.id;
-                    allCards.push(cardData);
-                    if (cardData.tags) {
-                        cardData.tags.forEach(tag => allTags.add(tag));
-                    }
-                });
-                populateTagsFilter();
-                renderCards(allCards);
-            }
-
-            function filterCards(searchTerm, languageFilter, tagFilter, sortOption) {
-                let filteredCards = allCards;
-
-                if (searchTerm) {
-                    const term = searchTerm.toLowerCase();
-                    filteredCards = filteredCards.filter(card => 
-                        card.title.toLowerCase().includes(term) || 
-                        card.code.toLowerCase().includes(term) ||
-                        (card.languages && card.languages.some(lang => lang.toLowerCase().includes(term))) ||
-                        (card.tags && card.tags.some(tag => tag.toLowerCase().includes(term)))
-                    );
-                }
-
-                if (languageFilter) {
-                    filteredCards = filteredCards.filter(card => 
-                        card.languages && card.languages.includes(languageFilter.toLowerCase())
-                    );
-                }
-
-                if (tagFilter) {
-                    filteredCards = filteredCards.filter(card => 
-                        card.tags && card.tags.includes(tagFilter)
-                    );
-                }
-
-                if (sortOption) {
-                    switch (sortOption) {
-                        case 'title-asc':
-                            filteredCards.sort((a, b) => a.title.localeCompare(b.title));
-                            break;
-                        case 'title-desc':
-                            filteredCards.sort((a, b) => b.title.localeCompare(a.title));
-                            break;
-                        case 'date-asc':
-                            filteredCards.sort((a, b) => (a.timestamp?.toDate() || 0) - (b.timestamp?.toDate() || 0));
-                            break;
-                        case 'date-desc':
-                            filteredCards.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
-                            break;
-                    }
-                }
-
-                return filteredCards;
-            }
-
-            function renderCards(cards) {
-                cardsContainer.innerHTML = '';
-                cards.forEach(cardData => {
-                    addCardToContainer(
-                        cardData.title, 
-                        cardData.code, 
-                        cardData.id, 
-                        cardData.backgroundColor,
-                        cardData.languages,
-                        cardData.tags
-                    );
-                });
-            }
-
-            async function deleteCard(cardId) {
-                await db.collection("cards").doc(cardId).delete();
-                allCards = allCards.filter(card => card.id !== cardId);
-                allTags = new Set();
-                allCards.forEach(card => {
-                    if (card.tags) {
-                        card.tags.forEach(tag => allTags.add(tag));
-                    }
-                });
-                populateTagsFilter();
-                renderCards(allCards);
-            }
-
-            function openEditCardForm(cardId) {
-                const card = allCards.find(card => card.id === cardId);
-                if (card) {
-                    cardIdInput.value = card.id;
-                    cardTitleInput.value = card.title;
-                    cardCodeInput.value = card.code;
-                    languageCheckboxes.forEach(checkbox => {
-                        checkbox.checked = card.languages && card.languages.includes(checkbox.value);
-                    });
-                    renderIframe(card.code);
-                    addEditCardSection.style.display = 'block';
-                }
-            }
-
-            async function handleSaveCard() {
-                const cardId = cardIdInput.value;
-                const title = cardTitleInput.value;
-                const code = cardCodeInput.value;
-                const selectedLanguages = Array.from(languageCheckboxes)
-                    .filter(checkbox => checkbox.checked)
-                    .map(checkbox => checkbox.value);
-                const tagsInput = prompt("Digite tags adicionais separadas por vírgula (opcional, ex.: frontend, api):");
-                const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim().toLowerCase()).filter(tag => tag) : [];
-
-                if (!title || !code) {
-                    alert('Por favor, preencha o título e o código.');
-                    return;
-                }
-
-                if (selectedLanguages.length === 0) {
-                    const autoDetected = detectLanguage(code);
-                    selectedLanguages.push(autoDetected);
-                }
-
-                if (cardId) {
-                    await updateCardInFirestore(cardId, title, code, selectedLanguages, tags);
-                    const index = allCards.findIndex(card => card.id === cardId);
-                    allCards[index].title = title;
-                    allCards[index].code = code;
-                    allCards[index].languages = selectedLanguages;
-                    allCards[index].tags = tags;
-                } else {
-                    const backgroundColor = getRandomColor();
-                    const newCardId = await createCardInFirestore(title, code, backgroundColor, selectedLanguages, tags);
-                    if (newCardId) {
-                        allCards.push({ id: newCardId, title, code, backgroundColor, languages: selectedLanguages, tags });
-                    }
-                }
-
-                allTags = new Set();
-                allCards.forEach(card => {
-                    if (card.tags) {
-                        card.tags.forEach(tag => allTags.add(tag));
-                    }
-                });
-                populateTagsFilter();
-                renderCards(allCards);
-                clearAddEditForm();
-                addEditCardSection.style.display = 'none';
-            }
-
-            function handleCodeInputChange() {
-                const code = cardCodeInput.value;
-                renderIframe(code);
-            }
-
-            async function logout() {
-                try {
-                    await auth.signOut();
-                    loginSection.style.display = 'block';
-                    addEditCardSection.style.display = 'none';
-                    searchBar.style.display = 'none';
-                    cardListSection.style.display = 'none';
-                    cardsContainer.innerHTML = '';
-                    header.style.display = 'none';
-                    footer.style.display = 'none';
-                    loggedIn = false;
-                } catch (error) {
-                    console.error("Erro ao fazer logout:", error.message);
-                }
-            }
-
-            async function login(email, password) {
-                try {
-                    await auth.signInWithEmailAndPassword(email, password);
-                    loginSection.style.display = "none";
-                    header.style.display = 'flex';
-                    addEditCardSection.style.display = "block";
-                    searchBar.style.display = 'flex';
-                    cardListSection.style.display = 'block';
-                    cardsContainer.style.visibility = 'visible';
-                    footer.style.display = 'block';
-                    loggedIn = true;
-                    loadCardsFromFirestore();
-                    loadThemeFromFirestore();
-                } catch (error) {
-                    console.error("Erro ao fazer login:", error.message);
-                    alert("Email ou senha incorretos.");
-                }
-            }
-
-            function applyFilters() {
-                const searchTerm = searchInput.value;
-                const languageFilter = filterLanguage.value;
-                const tagFilter = filterTag.value;
-                const sortOption = filterSort.value;
-                const filteredCards = filterCards(searchTerm, languageFilter, tagFilter, sortOption);
-                renderCards(filteredCards);
-            }
-
-            searchInput.addEventListener('input', applyFilters);
-            filterLanguage.addEventListener('change', applyFilters);
-            filterTag.addEventListener('change', applyFilters);
-            filterSort.addEventListener('change', applyFilters);
-
-            logoutButton.addEventListener('click', logout);
-
-            saveButton.addEventListener('click', handleSaveCard);
-
-            cancelButton.addEventListener('click', () => {
-                addEditCardSection.style.display = 'none';
-                clearAddEditForm();
-            });
-
-            cardCodeInput.addEventListener('input', handleCodeInputChange);
-
-            gridViewButton.addEventListener('click', () => {
-                cardsContainer.classList.remove('list-view');
-            });
-
-            listViewButton.addEventListener('click', () => {
-                cardsContainer.classList.add('list-view');
-            });
-
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    loginSection.style.display = 'none';
-                    header.style.display = 'flex';
-                    cardsContainer.style.visibility = 'visible';
-                    searchBar.style.display = 'flex';
-                    cardListSection.style.display = 'block';
-                    footer.style.display = 'block';
-                    loggedIn = true;
-                    addEditCardSection.style.display = 'none';
-                    loadCardsFromFirestore();
-                    loadThemeFromFirestore();
-                } else {
-                    loginSection.style.display = "block";
-                    addEditCardSection.style.display = "none";
-                    searchBar.style.display = 'none';
-                    cardListSection.style.display = 'none';
-                    cardsContainer.innerHTML = '';
-                    header.style.display = 'none';
-                    footer.style.display = 'none';
-                    clearAddEditForm();
-                    loggedIn = false;
-                }
-            });
-
-            loginButton.addEventListener('click', async () => {
-                const email = emailInput.value;
-                const password = passwordInput.value;
-                if (!email || !password) {
-                    alert("Por favor, insira email e senha.");
-                    return;
-                }
-                await login(email, password);
-            });
-
-            const start = async () => {
-                try {
-                    await login(emailInput.value, passwordInput.value);
-                } catch (e) {
-                    console.error('Erro ao logar automaticamente', e);
-                }
-            };
-
-            window.addEventListener("load", start);
         });
-    </script>
+
+        searchInput.addEventListener('input', (e) => {
+            currentFilters.search = e.target.value;
+            filterAndSearchProjects();
+        });
+
+        const openModal = (url, title) => {
+            if (!url || url === '#') {
+                alert('Preview não disponível.');
+                return;
+            }
+            modalTitle.textContent = title || 'Preview do Projeto';
+            previewIframe.src = url;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('fullscreen');
+            modal.classList.add('hidden');
+            previewIframe.src = 'about:blank';
+            fullscreenButton.querySelector('i').classList.replace('fa-compress', 'fa-expand');
+            document.body.style.overflow = '';
+        };
+
+        const toggleFullscreen = () => {
+            modal.classList.toggle('fullscreen');
+            const icon = fullscreenButton.querySelector('i');
+            icon.classList.toggle('fa-expand');
+            icon.classList.toggle('fa-compress');
+        };
+
+        gallery.addEventListener('click', (e) => {
+            const btn = e.target.closest('.preview-button');
+            if (btn) {
+                const url = btn.dataset.previewUrl;
+                const title = btn.closest('.project-card').querySelector('h3').textContent;
+                openModal(url, title);
+            }
+        });
+
+        closeModalButton.addEventListener('click', closeModal);
+        fullscreenButton.addEventListener('click', toggleFullscreen);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal(); });
+
+        showAddPanelBtn.addEventListener('click', () => addProjectPanel.classList.remove('hidden'));
+        hideAddPanelBtn.addEventListener('click', () => {
+            addProjectPanel.classList.add('hidden');
+            addProjectForm.reset();
+            formMessage.textContent = '';
+        });
+
+        addProjectForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(addProjectForm);
+            const project = Object.fromEntries(formData.entries());
+            const techs = project.technologies.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
+
+            if (!project.title || !project.category || !project.description || !project.imageUrl || !project.liveUrl || techs.length === 0) {
+                formMessage.textContent = 'Preencha todos os campos obrigatórios.';
+                formMessage.classList.add('text-red-600', 'dark:text-red-400');
+                return;
+            }
+
+            const newCard = document.createElement('article');
+            newCard.className = 'project-card flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden';
+            newCard.dataset.technologies = techs.join(',');
+            newCard.dataset.category = project.category;
+            newCard.dataset.title = project.title.toLowerCase();
+            newCard.dataset.description = project.description.toLowerCase();
+            newCard.innerHTML = `
+                <figure>
+                    <img src="${project.imageUrl}" alt="Preview de ${project.title}" loading="lazy">
+                </figure>
+                <div class="p-4 flex flex-col flex-grow card-content">
+                    <h3 class="text-lg font-semibold mb-1">${project.title}</h3>
+                    <p class="text-xs text-indigo-500 dark:text-indigo-400 mb-2 capitalize">${project.category.replace('-', ' ')}</p>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        ${techs.map(t => `<span class="tech-tag px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full dark:bg-gray-600 dark:text-gray-300">${t}</span>`).join('')}
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">${project.description}</p>
+                    <div class="mt-auto flex flex-wrap gap-2 items-center">
+                        <button class="preview-button text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded-md transition-colors flex-shrink-0" data-preview-url="${project.liveUrl}">
+                            <i class="fas fa-eye mr-1"></i> Ver Preview
+                        </button>
+                        <a href="${project.liveUrl}" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 py-1 px-3 rounded-md transition-colors flex-shrink-0">
+                            <i class="fas fa-external-link-alt mr-1"></i> Visitar
+                        </a>
+                        ${project.codeUrl ? `<a href="${project.codeUrl}" target="_blank" rel="noopener noreferrer" class="text-sm bg-gray-600 hover:bg-gray-500 text-white dark:bg-gray-600 dark:hover:bg-gray-500 py-1 px-3 rounded-md transition-colors flex-shrink-0"><i class="fab fa-github mr-1"></i> Código</a>` : ''}
+                    </div>
+                </div>
+            `;
+            gallery.appendChild(newCard);
+            addProjectForm.reset();
+            addProjectPanel.classList.add('hidden');
+            filterAndSearchProjects();
+        });
+
+        applyLayout(currentLayout);
+    });
+</script>
+
 </body>
 </html>
